@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "VistaPrint - AI-design resizer",
+  "name": "AI-design resizer",
   "version": "1.2",
-  "description": "Genereer printformaat-prompts voor klanten op basis van 300 DPI rekenlogica.",
+  "description": "Genereer AI printformaat-prompts voor VistaPrint-producten op basis van 300 DPI rekenlogica.",
   "permissions": [
     "sidePanel"
   ],
@@ -14,8 +14,5 @@
   },
   "background": {
     "service_worker": "background.js"
-  },
-  "content_security_policy": {
-    "extension_pages": "script-src 'self' https://cdn.jsdelivr.net; object-src 'self'"
   }
 }
