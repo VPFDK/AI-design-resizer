@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VistaPrint - AI-design resizer</title>
+  <style>
+    :root {
+      --vp-navy: #006094;          /* Officiële Vista Marineblauw */
+      --vp-blue-hover: #2aa7de;    /* Helderder blauw voor hover */
+      --vp-cyan: #6ccef4;          /* Vista Cyan Accent */
+      --vp-dark: #111111;
+      --vp-bg-light: #6ccef4;
+      --vp-border: #d1d5db;
+      --vp-text: #222222;
+      --vp-error: #d92d20;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #ffffff;
+      color: var(--vp-text);
+      padding: 16px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--vp-bg-light);
+    }
+
+    .header-logo {
+      width: 32px;
+      height: 32px;
+      background-color: var(--vp-navy);
+      color: #ffffff;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      font-size: 18px;
+      border-bottom: 3px solid var(--vp-cyan);
+    }
+
+    .header h1 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--vp-navy);
+      letter-spacing: -0.2px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #4b5563;
+    }
+
+    select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--vp-border);
+      border-radius: 6px;
+      font-size: 13px;
+      background-color: #ffffff;
+      color: var(--vp-text);
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    select:focus, textarea:focus {
+      border-color: var(--vp-navy);
+      box-shadow: 0 0 0 3px rgba(0, 0, 164, 0.12);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 130px;
+      font-family: monospace;
+      font-size: 12px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      background-color: var(--vp-navy);
+      color: #ffffff;
+      border: none;
+      padding: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--vp-blue-hover);
+    }
+
+    .btn-secondary {
+      width: 100%;
+      background-color: var(--vp-bg-light);
+      color: var(--vp-navy);
+      border: 1px solid var(--vp-border);
+      padding: 9px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .btn-secondary:hover {
+      background-color: #e5e7eb;
+    }
+
+    .error-msg {
+      color: var(--vp-error);
+      font-size: 12px;
+      margin-top: 4px;
+      display: none;
+      font-weight: 500;
+    }
+
+    .result-container {
+      margin-top: 18px;
+      display: none;
+    }
+
+    .result-box {
+      background-color: var(--vp-bg-light);
+      border: 1px solid var(--vp-border);
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 240px;
+      overflow-y: auto;
+      border-left: 4px solid var(--vp-navy);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      background: #059669;
+      color: white;
+      text-align: center;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      display: none;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+.checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: normal;
+      text-transform: none;
+      font-size: 12px;
+      color: var(--vp-text);
+      cursor: pointer;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--vp-navy);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-logo">V</div>
+    <h1>AI-design resizer</h1>
+  </div>
+
+  <div class="form-group">
+    <label for="modelSelect">1. AI Model van klant</label>
+    <select id="modelSelect">
+      <option value="" disabled selected>Selecteer het gebruikte model</option>
+      <option value="chatgpt">ChatGPT</option>
+      <option value="gemini_canva">Google Gemini / Adobe / Canva</option>
+      <option value="midjourney">Midjourney</option>
+      <option value="generiek">Anders / Niet bekend</option>
+    </select>
+    <div id="modelError" class="error-msg">Selecteer eerst een AI-model.</div>
+  </div>
+
+  <div class="form-group">
+    <label for="inputData">2. Plak afmetingen / specs</label>
+    <textarea id="inputData" placeholder="Plak hier de specificaties:
+
+Afloop
+108 mm x 151 mm
+
+Afsnijdlijn
+105 mm x 148 mm
+
+Veilige marge
+102 mm x 145 mm"></textarea>
+    <div id="inputError" class="error-msg">Geen geldige afmetingen gevonden in de tekst.</div>
+  </div>
+
+<div class="form-group">
+    <label>3. Extra correcties (optioneel)</label>
+    <div class="checkbox-group">
+      <label class="checkbox-label">
+        <input type="checkbox" id="checkFont">
+        <span>Tekst schalen naar minimaal 8 pt</span>
+      </label>
+      <label class="checkbox-label">
+        <input type="checkbox" id="checkBorders">
+        <span>Kaders/randen verwijderen</span>
+      </label>
+    </div>
+  </div>
+
+  <button id="generateBtn" class="btn-primary">Genereer Prompt</button>
+
+  <div id="resultContainer" class="result-container">
+    <label>3. Gegenereerde Prompt (voor klant)</label>
+    <div id="resultBox" class="result-box"></div>
+    <button id="copyBtn" class="btn-secondary">Kopieer deze prompt</button>
+  </div>
+
+  <div id="toast" class="toast">Prompt gekopieerd!</div>
+
+  <script src="app.js"></script>
+</body>
+</html>
