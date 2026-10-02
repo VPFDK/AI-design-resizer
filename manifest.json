@@ -1,13 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "VistaPrint - DTP Prompt Generator",
+  "name": "VistaPrint - AI-design resizer",
   "version": "1.2",
   "description": "Genereer printformaat-prompts voor klanten op basis van 300 DPI rekenlogica.",
   "permissions": [
     "sidePanel"
   ],
   "action": {
-    "default_title": "Open DTP Prompt Generator"
+    "default_title": "Open AI-design resizer"
   },
   "side_panel": {
     "default_path": "panel.html"
